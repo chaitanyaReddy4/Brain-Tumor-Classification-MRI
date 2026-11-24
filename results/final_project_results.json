@@ -1,0 +1,28 @@
+{
+    "project": "AI-Based Brain Tumor Classification Using MRI",
+    "dataset": "BRISC 2025",
+    "classes": [
+        "glioma",
+        "meningioma",
+        "no_tumor",
+        "pituitary"
+    ],
+    "primary_model": {
+        "name": "MobileNetV2",
+        "test_accuracy": 92.5,
+        "macro_precision": 93.57,
+        "macro_recall": 93.04,
+        "macro_f1": 93.14,
+        "weighted_f1": 92.43
+    },
+    "comparison_model": {
+        "name": "EfficientNetB0",
+        "test_accuracy": 90.8,
+        "macro_precision": 92.09,
+        "macro_recall": 91.78,
+        "macro_f1": 91.77,
+        "weighted_f1": 90.66
+    },
+    "explainability": "Grad-CAM",
+    "test_images": 1000
+}

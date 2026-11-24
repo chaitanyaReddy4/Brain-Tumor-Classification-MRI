@@ -1,0 +1,9 @@
+{
+    "model": "MobileNetV2_Corrected_Augmentation",
+    "test_images": 1000,
+    "correct_predictions": 925,
+    "test_accuracy": 0.925000011920929,
+    "test_loss": 0.20967289805412292,
+    "macro_f1": 0.9313883053013045,
+    "weighted_f1": 0.9243069231156085
+}

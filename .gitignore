@@ -1,26 +1,28 @@
-# Dataset
 brain_tumor/
+*.zip
 
-# Python
 __pycache__/
-*.pyc
-
-# Jupyter
+*.py[cod]
 .ipynb_checkpoints/
 
-# Environments
-.venv/
 venv/
-env/
+.venv/
+.env/
 
-# Temporary files
+*.log
 *.tmp
-.DS_Store
+*.temp
 
-# Model training checkpoints
-*.weights.h5
-checkpoint/
-project_checkpoint/
+# Experimental and duplicate model checkpoints
+baseline_cnn_model.keras
+best_cnn_model.keras
+best_finetuned_model.keras
+best_mobilenet_model.keras
+efficientnetb0_best.keras
+efficientnetb0_finetuned_best.keras
+final_brain_tumor_model.keras
+mobilenetv2_corrected_experiment.keras
 
-# Local environment files
-.env
+# Keep only the final primary model in models/
+models/*
+!models/brain_tumor_mobilenetv2_final.keras

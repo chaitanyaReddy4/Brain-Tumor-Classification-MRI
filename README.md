@@ -1,350 +1,471 @@
-# AI-Based Brain Tumor Classification Using MRI with Explainable Deep Learning
 
-An explainable deep learning project that classifies brain MRI images into four categories — **Glioma, Meningioma, Pituitary Tumor, and No Tumor** — using Convolutional Neural Networks (CNN) and MobileNetV2 transfer learning, with Grad-CAM visualizations to understand model predictions.
+# 🧠 AI-Based Brain Tumor Classification Using MRI
+### Explainable Deep Learning with MobileNetV2, EfficientNetB0 and Grad-CAM
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.13-blue?logo=python" alt="Python"/>
-  <img src="https://img.shields.io/badge/TensorFlow-2.21-orange?logo=tensorflow" alt="TensorFlow"/>
-  <img src="https://img.shields.io/badge/Deep%20Learning-CNN%20%7C%20MobileNetV2-red" alt="Deep Learning"/>
-  <img src="https://img.shields.io/badge/Explainability-Grad--CAM-purple" alt="Grad-CAM"/>
-  <img src="https://img.shields.io/badge/Test%20Accuracy-89.90%25-success" alt="Test Accuracy"/>
+
+**An experimental deep learning system for four-class brain MRI classification with explainable AI and an interactive Streamlit application.**
+
 </p>
 
 ---
 
-## 1. Project Overview
+## 📌 1. Project Overview
 
-Brain tumors are abnormal growths of cells in the brain. Analyzing MRI scans is an important part of brain tumor assessment, but interpreting medical images requires specialized expertise.
+Brain tumors are associated with different patterns and appearances in Magnetic Resonance Imaging (MRI) scans. Analyzing these images requires careful examination, and deep learning offers a way to investigate automated image classification.
 
-This project explores how deep learning can assist with classifying brain MRI images into different categories.
+This project develops an **AI-based brain tumor classification system** using transfer learning and convolutional neural networks.
 
-The system uses:
+The system classifies brain MRI images into four categories:
 
-- A custom Convolutional Neural Network as a baseline model.
-- MobileNetV2 with ImageNet pretrained weights for transfer learning.
-- Fine-tuning to improve classification performance.
-- Grad-CAM (Gradient-weighted Class Activation Mapping) for visual explanations of model predictions.
+- Glioma
+- Meningioma
+- No Tumor
+- Pituitary
 
-The final fine-tuned MobileNetV2 model achieved **89.90% accuracy on an independent test set of 1,000 images**.
+MobileNetV2 is selected as the primary model. EfficientNetB0 is implemented as a comparison model, while a custom CNN serves as a baseline.
 
-### Project objectives
+To improve interpretability, Grad-CAM (Gradient-weighted Class Activation Mapping) is integrated to visualize image regions that influence model predictions.
 
-1. Develop an automated brain MRI image classification pipeline.
-2. Classify MRI images into four categories.
-3. Compare a custom CNN with transfer learning.
-4. Improve model performance through fine-tuning.
-5. Visualize important image regions using Grad-CAM.
-6. Evaluate performance using precision, recall, F1-score and a confusion matrix.
+An interactive Streamlit application allows users to upload MRI images, view predictions, inspect class scores and visualize Grad-CAM overlays.
 
-## 2. Dataset
+**Project type:** Individual Academic Capstone Project  
+**Domain:** Artificial Intelligence / Deep Learning / Medical Image Analysis  
+**Dataset:** BRISC 2025  
+**Primary architecture:** MobileNetV2  
+**Explainability:** Grad-CAM  
+**Application:** Streamlit
 
-**Dataset:** BRISC 2025 – Brain Tumor MRI Dataset
+> **Disclaimer:** This is an educational research prototype. It is not a clinically validated diagnostic system and must not be used to make medical decisions.
 
-- Dataset paper: Fateh et al. (2025)
-- Research paper: https://arxiv.org/abs/2506.14318
-- Kaggle dataset: https://www.kaggle.com/datasets/briscdataset/brisc2025
+---
 
-The dataset contains 6,000 brain MRI images:
+## 🎯 2. Problem Statement
 
-| Dataset split | Images |
+Manual interpretation of brain MRI images requires specialized medical expertise. Exploring automated image classification can help demonstrate how deep learning models identify image patterns associated with different brain tumor categories.
+
+The objective of this project is to develop and evaluate a deep learning pipeline that:
+
+1. Processes brain MRI images.
+2. Classifies images into four predefined categories.
+3. Compares multiple deep learning architectures.
+4. Evaluates classification performance using appropriate metrics.
+5. Provides visual explanations through Grad-CAM.
+6. Demonstrates inference through an interactive web application.
+
+---
+
+## 💡 3. Proposed Solution
+
+The proposed system follows a complete machine learning workflow:
+
+1. Dataset acquisition and inspection.
+2. Duplicate detection and data leakage auditing.
+3. Image preprocessing and augmentation.
+4. Baseline CNN development.
+5. Transfer learning using MobileNetV2.
+6. Transfer learning using EfficientNetB0.
+7. Fine-tuning and model selection.
+8. Test-set evaluation.
+9. Grad-CAM explainability.
+10. Streamlit application development.
+
+MobileNetV2 is used as the final primary classification model because it achieved better test performance than EfficientNetB0 in the conducted comparison.
+
+---
+
+## 📂 4. Dataset Description
+
+**Dataset:** BRISC 2025
+
+**Dataset source:**  
+https://www.kaggle.com/datasets/briscdataset/brisc2025
+
+The dataset provides brain MRI images for classification and segmentation tasks.
+
+This project uses the classification task.
+
+### Original dataset composition
+
+| Dataset | Number of images |
 |---|---:|
-| Original training set | 5,000 |
-| Original test set | 1,000 |
+| Training | 5,000 |
+| Testing | 1,000 |
 | **Total** | **6,000** |
 
 ### Classification categories
 
-The classification task contains four classes:
-
 | Class | Description |
 |---|---|
-| Glioma | Brain tumor category |
-| Meningioma | Brain tumor category |
-| No Tumor | MRI images without a tumor |
-| Pituitary | Pituitary tumor category |
+| Glioma | Glioma category |
+| Meningioma | Meningioma category |
+| No Tumor | No-tumor category |
+| Pituitary | Pituitary category |
 
-### Original dataset distribution
+### Final experimental data split
 
-| Class | Training images | Test images |
-|---|---:|---:|
-| Glioma | 1,147 | 254 |
-| Meningioma | 1,329 | 306 |
-| No Tumor | 1,067 | 140 |
-| Pituitary | 1,457 | 300 |
-| **Total** | **5,000** | **1,000** |
+A data-quality audit was performed before generating the training and validation sets.
 
-The dataset also includes a segmentation task, but this project focuses on the classification task.
-
-## 3. Dataset Quality and Leakage Audit
-
-Before training, the dataset manifest was examined to identify duplicate images and possible data leakage.
-
-SHA-256 hashing was used to identify identical image files.
-
-The audit identified:
-
-- 46 repeated SHA-256 hash groups.
-- 7 image hashes appearing across the original training and test splits.
-- No conflicting labels among the identified repeated hashes.
-
-To reduce the risk of data leakage:
-
-1. Training images whose hashes appeared in the test set were excluded from training.
-2. Duplicate images within the remaining training data were removed.
-3. The original test set was retained for independent evaluation.
-
-After cleaning:
-
-| Dataset | Images |
+| Split | Images |
 |---|---:|
-| Cleaned training pool | 4,955 |
-| Independent test set | 1,000 |
-| **Total used** | **5,955** |
+| Training | 3,964 |
+| Validation | 991 |
+| Testing | 1,000 |
+| **Total** | **5,955** |
 
-This step helps ensure that identical images do not appear in both the training and test datasets.
+The original training pool was cleaned to 4,955 images before the stratified split.
 
-## 4. Train, Validation and Test Split
+The original 1,000-image test set was retained for final evaluation.
 
-The cleaned training pool was divided using a stratified split.
+### Data leakage prevention
 
-- Training: 80%
-- Validation: 20%
-- Random state: 42
-- Stratification: Tumor class labels
+A SHA256-based duplicate audit was performed on the original image files.
 
-The independent test set was not used for training or validation.
+Audit observations:
 
-| Class | Training | Validation | Test |
-|---|---:|---:|---:|
-| Glioma | 918 | 229 | 254 |
-| Meningioma | 1,048 | 262 | 306 |
-| No Tumor | 846 | 212 | 140 |
-| Pituitary | 1,152 | 288 | 300 |
-| **Total** | **3,964** | **991** | **1,000** |
+- 46 repeated hash groups were identified.
+- 7 hashes were found across the original training and testing sets.
+- No conflicting labels were identified among the repeated hashes.
+- Training copies of hashes appearing in the test set were excluded.
+- Remaining training images were deduplicated.
 
-The total number of images used across all three splits is 5,955.
+The cleaned training pool contained 4,955 images.
 
-## 5. Image Preprocessing
+An 80:20 stratified training-validation split was then created using `random_state=42`.
 
-All MRI images were prepared for deep learning using a consistent preprocessing pipeline.
+The same split manifests were used for MobileNetV2 and EfficientNetB0 to maintain a fair model comparison.
 
-| Operation | Configuration |
-|---|---|
-| Image format | RGB |
-| Image dimensions | 224 × 224 |
-| Input channels | 3 |
-| Pixel normalization | Divide by 255 |
-| Input pixel range | 0–1 |
-| Batch size | 8 |
-| Validation/test shuffling | Disabled |
+---
+
+## ⚙️ 5. Data Preprocessing
+
+All images were prepared for transfer learning.
+
+### Preprocessing operations
+
+- Images decoded and converted to RGB.
+- Images resized to 224 × 224.
+- Aspect ratio preserved using padding.
+- Pixel values converted to floating-point representation.
+- Model-specific input preprocessing applied.
 
 ### Data augmentation
 
-Data augmentation was applied during model training to introduce controlled image variations.
+The MobileNetV2 experiment used:
 
-The augmentation operations included:
+- Random rotation: 0.03
+- Random zoom: 0.08
+- Random contrast: 0.1
+- Reflect padding for rotation and zoom.
 
-- Random Rotation: factor 0.03
-- Random Zoom: factor 0.08
-- Random Contrast: factor 0.1
+Contrast augmentation was configured with an input range of (0, 1) for the corrected MobileNetV2 pipeline.
 
-The model's internal rescaling layer transforms normalized inputs from the 0–1 range to the -1–1 range for MobileNetV2.
+EfficientNetB0 used its own compatible input preprocessing and an augmentation contrast range of (0, 255).
 
-The same normalized image scale is maintained during validation and test evaluation.
+These preprocessing differences were maintained to respect the respective model architectures.
 
-## 6. Model Development
+---
 
-Two deep learning approaches were implemented and evaluated.
+## 🏗️ 6. Model Architectures
 
-### Model 1: Custom CNN
+Three model approaches were explored.
 
-A custom Convolutional Neural Network was developed as the baseline model.
+### 6.1 Custom CNN — Baseline
+
+A custom convolutional neural network was developed to establish a baseline.
+
+Architecture components:
+
+- Convolutional layers
+- Max pooling
+- Global average pooling
+- Fully connected layer
+- Dropout
+- Four-class softmax output
+
+The baseline CNN achieved:
+
+| Metric | Validation result |
+|---|---:|
+| Validation accuracy | 84.16% |
+| Validation macro F1-score | 83.99% |
+
+These are validation results, not final test-set results.
+
+### 6.2 MobileNetV2 — Primary Model
+
+MobileNetV2 was selected for transfer learning using ImageNet pretrained weights.
 
 Architecture:
 
-| Layer | Configuration |
-|---|---|
-| Convolution | 32 filters |
-| Max Pooling | Downsampling |
-| Convolution | 64 filters |
-| Max Pooling | Downsampling |
-| Convolution | 128 filters |
-| Max Pooling | Downsampling |
-| Convolution | 256 filters |
-| Global Average Pooling | Feature aggregation |
-| Dense | 128 units |
-| Dropout | Regularization |
-| Output | 4 classes |
+- MobileNetV2 feature extraction backbone
+- Global Average Pooling
+- Dropout
+- Dense layer with 128 units
+- Dropout
+- Four-unit softmax classification layer
 
-The model was trained for 15 epochs.
+**Input size:** 224 × 224 × 3
 
-**Validation results:**
+#### Training strategy
 
-| Metric | Result |
-|---|---:|
-| Training accuracy | 81.05% |
-| Validation accuracy | 84.16% |
-| Validation loss | 0.4349 |
-| Macro F1-score | 83.99% |
+**Stage 1 — Transfer learning**
 
-The custom CNN established a baseline for comparison with transfer learning.
+- Backbone initially frozen.
+- Classification head trained.
+- Learning rate: 0.001.
+- Training epochs: 12.
 
-### Model 2: MobileNetV2 Transfer Learning
+**Stage 2 — Fine-tuning**
 
-MobileNetV2 pretrained on ImageNet was used as the feature extraction backbone.
+- Selected backbone layers unfrozen.
+- Batch normalization layers kept frozen.
+- Learning rate: 0.00001.
+- Fine-tuning epochs: 8.
 
-The architecture consists of:
+A corrected augmentation experiment was subsequently performed to ensure the contrast transformation used the correct pixel range.
 
-- MobileNetV2 pretrained base.
-- Global Average Pooling.
-- Dropout.
-- Dense layer with 128 units.
-- Dropout.
-- Four-class output layer.
+The corrected model was saved as:
 
-The pretrained base initially remained frozen while the classification head was trained.
+`mobilenetv2_corrected_experiment.keras`
 
-Initial training:
+#### MobileNetV2 validation performance
 
 | Metric | Result |
 |---|---:|
-| Training accuracy | 89.28% |
-| Validation accuracy | 88.29% |
-| Validation loss | 0.3294 |
+| Best validation accuracy | 92.33% |
+| Best validation loss | 0.2105 |
 
-### Fine-tuning
+### 6.3 EfficientNetB0 — Comparison Model
 
-After initial transfer learning, selected MobileNetV2 layers were unfrozen for fine-tuning.
+EfficientNetB0 was implemented using ImageNet pretrained weights.
 
-Configuration:
+Architecture components:
 
-- Fine-tuning epochs: 8
-- Learning rate: 0.00001 (1e-5)
-- Best validation checkpoint selected.
+- EfficientNetB0 feature extraction backbone
+- Global Average Pooling
+- Dropout
+- Dense layer with 128 units
+- Dropout
+- Four-class softmax output
 
-Best fine-tuned validation results:
+**Input size:** 224 × 224 × 3
 
-| Metric | Result |
-|---|---:|
-| Training accuracy | 95.28% |
-| Validation accuracy | 91.93% |
-| Validation loss | 0.2189 |
-| Macro F1-score | 92.04% |
+#### Training strategy
 
-The best validation checkpoint was selected instead of automatically using the final training epoch.
+**Stage 1 — Transfer learning**
 
-### Model architecture summary
+- Backbone frozen.
+- Classification head trained.
+- Learning rate: 0.001.
+- Maximum epochs: 8.
 
-The fine-tuned MobileNetV2 model contains:
+**Stage 2 — Fine-tuning**
 
-| Parameter | Value |
-|---|---:|
-| Total parameters | 2,422,468 |
-| Trainable parameters | 164,484 |
-| Non-trainable parameters | 2,257,984 |
+- Last 30 backbone layers selected for unfreezing.
+- Batch normalization layers kept frozen.
+- Learning rate: 0.00001.
+- Fine-tuning epochs: 8.
 
-The final fine-tuned model was saved in Keras format for reuse without retraining.
-
-## 7. Explainable AI – Grad-CAM
-
-Deep learning models can produce accurate predictions without clearly explaining which image regions influenced their decisions.
-
-To improve interpretability, Grad-CAM was implemented.
-
-Grad-CAM generates a heatmap that highlights image regions contributing strongly to a selected class prediction.
-
-### How it works
-
-1. Pass an MRI image through the trained model.
-2. Extract feature maps from the final convolutional layer.
-3. Calculate gradients of the selected class score with respect to those feature maps.
-4. Generate a weighted activation heatmap.
-5. Overlay the heatmap on the original MRI image.
-
-### What Grad-CAM provides
-
-- A visual representation of model attention.
-- Insight into image regions influencing a prediction.
-- A way to inspect model behavior beyond the predicted label.
-- An additional explainability component for the classification pipeline.
-
-**Important:** Grad-CAM highlights influential regions. It does not provide a medically validated tumor boundary, segmentation mask or clinical explanation.
-
-## 8. Final Independent Test Evaluation
-
-The best fine-tuned MobileNetV2 model was evaluated on the independent test set containing 1,000 images.
-
-### Overall results
+#### EfficientNetB0 validation performance
 
 | Metric | Result |
 |---|---:|
-| Test accuracy | **89.90%** |
-| Test loss | 0.2776 |
-| Macro precision | 91.10% |
-| Macro recall | 90.44% |
-| Macro F1-score | 90.53% |
-| Weighted precision | 90.22% |
-| Weighted recall | 89.90% |
-| Weighted F1-score | 89.80% |
+| Best validation accuracy | 91.02% |
+| Best validation loss | 0.21728 |
 
-### Class-wise classification report
+---
+
+## 📊 7. Final Model Evaluation
+
+Both transfer-learning models were evaluated using the same held-out test set containing 1,000 images.
+
+### 7.1 Overall test performance
+
+| Evaluation Metric | MobileNetV2 | EfficientNetB0 |
+|---|---:|---:|
+| Test Accuracy | **92.50%** | 90.80% |
+| Macro Precision | **93.57%** | 92.09% |
+| Macro Recall | **93.04%** | 91.78% |
+| Macro F1-score | **93.14%** | 91.77% |
+| Weighted F1-score | **92.43%** | 90.66% |
+| Correct predictions | **925 / 1000** | 908 / 1000 |
+
+### 7.2 MobileNetV2 — Class-wise test results
 
 | Class | Precision | Recall | F1-score | Support |
 |---|---:|---:|---:|---:|
-| Glioma | 95.91% | 83.07% | 89.03% | 254 |
-| Meningioma | 87.07% | 83.66% | 85.33% | 306 |
-| No Tumor | 95.04% | 95.71% | 95.37% | 140 |
-| Pituitary | 86.38% | 99.33% | 92.40% | 300 |
-| **Overall accuracy** | | | **89.90%** | **1,000** |
+| Glioma | 96.33% | 82.68% | 88.98% | 254 |
+| Meningioma | 86.07% | 90.85% | 88.39% | 306 |
+| No Tumor | 97.89% | 99.29% | 98.58% | 140 |
+| Pituitary | 94.01% | 99.33% | 96.60% | 300 |
+| **Macro Average** | **93.57%** | **93.04%** | **93.14%** | **1,000** |
 
-### Key observations
+### 7.3 MobileNetV2 confusion matrix
 
-- No Tumor achieved the highest class-wise F1-score at 95.37%.
-- Pituitary achieved the highest recall at 99.33%.
-- Glioma achieved 95.91% precision.
-- Meningioma was the most challenging category, with an F1-score of 85.33%.
-- The model achieved a macro F1-score of 90.53%, indicating good average class-wise performance.
+Rows represent actual classes; columns represent predicted classes.
 
-### Confusion matrix
+Class order:
 
-The confusion matrix is available at:
+Glioma, Meningioma, No Tumor, Pituitary.
 
-`results/test_confusion_matrix.csv`
+| Actual / Predicted | Glioma | Meningioma | No Tumor | Pituitary |
+|---|---:|---:|---:|---:|
+| Glioma | 210 | 43 | 0 | 1 |
+| Meningioma | 7 | 278 | 3 | 18 |
+| No Tumor | 0 | 1 | 139 | 0 |
+| Pituitary | 1 | 1 | 0 | 298 |
 
-It provides the actual-versus-predicted classification counts for all four classes.
+### 7.4 EfficientNetB0 — Class-wise test results
 
-The classification report is available at:
+| Class | Precision | Recall | F1-score | Support |
+|---|---:|---:|---:|---:|
+| Glioma | 92.58% | 83.46% | 87.78% | 254 |
+| Meningioma | 88.28% | 83.66% | 85.91% | 306 |
+| No Tumor | 99.29% | 100.00% | 99.64% | 140 |
+| Pituitary | 88.24% | 100.00% | 93.75% | 300 |
+| **Macro Average** | **92.09%** | **91.78%** | **91.77%** | **1,000** |
 
-`results/test_classification_report.json`
+### 7.5 EfficientNetB0 confusion matrix
 
-The overall test summary is available at:
+| Actual / Predicted | Glioma | Meningioma | No Tumor | Pituitary |
+|---|---:|---:|---:|---:|
+| Glioma | 212 | 34 | 0 | 8 |
+| Meningioma | 17 | 256 | 1 | 32 |
+| No Tumor | 0 | 0 | 140 | 0 |
+| Pituitary | 0 | 0 | 0 | 300 |
 
-`results/test_summary.json`
+### 7.6 Model selection
 
-## 9. Model Comparison
+MobileNetV2 achieved:
 
-The following table summarizes the main experimental results.
+- 1.70 percentage points higher test accuracy.
+- 1.35 percentage points higher macro F1-score.
+- 1.77 percentage points higher weighted F1-score.
 
-| Model / Stage | Training accuracy | Validation accuracy |
-|---|---:|---:|
-| Custom CNN | 81.05% | 84.16% |
-| MobileNetV2 initial | 89.28% | 88.29% |
-| MobileNetV2 fine-tuned | 95.28% | **91.93%** |
+Therefore, MobileNetV2 was selected as the primary model for the Streamlit application.
 
-The final fine-tuned model achieved **89.90% on the independent test set**.
+**Important:** The reported metrics describe performance on this particular dataset and split. They do not establish clinical performance or generalization to all hospitals and scanners.
 
-The test accuracy is the primary result to consider when evaluating performance on unseen data.
+---
 
-## 10. Project Structure
+## 🔍 8. Explainable AI — Grad-CAM
+
+Grad-CAM was integrated to provide a visual explanation of model predictions.
+
+It uses gradients flowing into the final convolutional feature map to generate a class-specific activation heatmap.
+
+### Implementation
+
+- Primary model: MobileNetV2.
+- Target convolutional layer: `out_relu`.
+- Final feature map size: 7 × 7 × 1280.
+- Heatmap resized to 224 × 224.
+- Heatmap combined with the original MRI image.
+
+### Visualization interpretation
+
+| Heatmap color | General interpretation |
+|---|---|
+| Red / Yellow | Stronger model activation |
+| Green | Intermediate activation |
+| Blue | Weaker activation |
+
+Grad-CAM highlights regions that influenced the model's prediction.
+
+It does not provide precise tumor segmentation or prove that the model is focusing exclusively on tumor tissue.
+
+Representative Grad-CAM visualizations were generated for all four classes.
+
+Results are stored in:
+
+`results/gradcam/`
+
+---
+
+## 🖥️ 9. Streamlit Web Application
+
+An interactive application was developed to demonstrate the trained MobileNetV2 model.
+
+### Features
+
+- MRI image upload.
+- JPG, JPEG and PNG support.
+- Image preprocessing.
+- Four-class prediction.
+- Model confidence score.
+- Class-wise prediction scores.
+- Grad-CAM heatmap generation.
+- Original MRI and heatmap overlay display.
+- Medical-use disclaimer.
+
+### Application workflow
+
+1. User uploads an MRI image.
+2. Image is converted to RGB.
+3. Image is resized and padded to 224 × 224.
+4. The trained MobileNetV2 model processes the image.
+5. The predicted class and class scores are displayed.
+6. Grad-CAM generates a heatmap.
+7. The original MRI and heatmap overlay are displayed.
+
+### Run locally
+
+```bash
+"D:\anaconda\python.exe" -m streamlit run app.py
+```
+
+Alternatively, if the correct Python environment is activated:
+
+```bash
+streamlit run app.py
+```
+
+Open the local URL displayed in the terminal, usually:
+
+`http://localhost:8501`
+
+External MRI images have also been used for demonstration of inference. These predictions are qualitative demonstrations and are not included in the reported test accuracy.
+
+---
+
+## 🛠️ 10. Technology Stack
+
+| Category | Technology |
+|---|---|
+| Programming language | Python |
+| Deep learning | TensorFlow / Keras |
+| Baseline architecture | Custom CNN |
+| Primary architecture | MobileNetV2 |
+| Comparison architecture | EfficientNetB0 |
+| Explainable AI | Grad-CAM |
+| Image processing | Pillow, TensorFlow |
+| Numerical computing | NumPy |
+| Visualization | Matplotlib |
+| Web interface | Streamlit |
+| Dataset | BRISC 2025 |
+| Development environment | Jupyter Notebook / Anaconda |
+
+---
+
+## 📁 11. Project Structure
 
 ```text
-Brain-Tumor-Classification-MRI/
+Brain_Tumor_AI_Project/
+│
+├── app.py
+├── README.md
+├── .gitignore
+│
+├── 01_Dataset_Inspection.ipynb
 │
 ├── notebooks/
-│   └── 01_Dataset_Inspection.ipynb
+│   ├── 01_Dataset_Inspection.ipynb
+│   └── 01_Dataset_Inspection_latest.ipynb
 │
 ├── models/
 │   ├── baseline_cnn.keras
+│   ├── brain_tumor_mobilenetv2.keras
 │   └── brain_tumor_mobilenetv2_tested.keras
 │
 ├── processed_data/
@@ -353,30 +474,51 @@ Brain-Tumor-Classification-MRI/
 │   └── test_manifest.csv
 │
 ├── results/
-│   ├── test_classification_report.json
-│   ├── test_confusion_matrix.csv
-│   └── test_summary.json
+│   ├── confusion_matrix_comparison.png
+│   ├── model_comparison.png
+│   ├── final_project_results.json
+│   ├── efficientnetb0_test_report.json
+│   ├── efficientnetb0_test_confusion_matrix.csv
+│   ├── mobilenetv2_corrected_summary.json
+│   ├── mobilenetv2_corrected_classification_report.json
+│   ├── mobilenetv2_corrected_confusion_matrix.csv
+│   └── gradcam/
 │
-├── .gitignore
-├── README.md
-└── requirements.txt
+├── brain_tumor/
+│   ├── classification_task/
+│   ├── segmentation_task/
+│   ├── manifest.csv
+│   └── README.md
+│
+└── Experimental model checkpoints
+    ├── baseline_cnn_model.keras
+    ├── best_cnn_model.keras
+    ├── best_finetuned_model.keras
+    ├── best_mobilenet_model.keras
+    ├── efficientnetb0_best.keras
+    ├── efficientnetb0_finetuned_best.keras
+    └── mobilenetv2_corrected_experiment.keras
 ```
 
-The original MRI dataset is not included in this GitHub repository because of its size. Download it separately from the dataset source and configure the dataset path in the notebook.
+The dataset and trained model files are not necessarily included in the public Git repository. Refer to the dataset source and project setup instructions.
 
-## 11. Installation and Setup
+---
+
+## 🚀 12. Installation and Setup
 
 ### Prerequisites
 
-- Python 3.13.9
-- Jupyter Notebook
-- TensorFlow 2.21.0
-- Git
-- A system capable of running TensorFlow
+- Python environment compatible with TensorFlow.
+- Jupyter Notebook or an IDE.
+- Sufficient RAM and storage for model loading and image processing.
 
-The project was developed and tested on Windows 11 using an 8 GB RAM system with integrated graphics and CPU-based TensorFlow execution.
+### Install dependencies
 
-### Step 1: Clone the repository
+```bash
+pip install tensorflow numpy matplotlib pillow streamlit
+```
+
+### Clone the repository
 
 ```bash
 git clone https://github.com/chaitanyaReddy4/Brain-Tumor-Classification-MRI.git
@@ -384,187 +526,116 @@ git clone https://github.com/chaitanyaReddy4/Brain-Tumor-Classification-MRI.git
 cd Brain-Tumor-Classification-MRI
 ```
 
-### Step 2: Create a virtual environment
+### Dataset setup
+
+1. Download BRISC 2025 from Kaggle.
+2. Extract the dataset.
+3. Place the classification dataset in the expected project directory.
+4. Ensure the trained MobileNetV2 model is available at the path used by `app.py`.
+
+### Launch the application
 
 ```bash
-python -m venv .venv
+streamlit run app.py
 ```
-
-Activate it on Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-### Step 3: Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Step 4: Download the dataset
-
-Download BRISC 2025 from:
-
-https://www.kaggle.com/datasets/briscdataset/brisc2025
-
-Extract the dataset and configure its location in the notebook.
-
-Expected classification directory:
-
-```text
-brain_tumor/
-└── classification_task/
-    ├── train/
-    │   ├── glioma/
-    │   ├── meningioma/
-    │   ├── no_tumor/
-    │   └── pituitary/
-    │
-    └── test/
-        ├── glioma/
-        ├── meningioma/
-        ├── no_tumor/
-        └── pituitary/
-```
-
-### Step 5: Launch Jupyter Notebook
-
-```bash
-jupyter notebook
-```
-
-Open:
-
-`notebooks/01_Dataset_Inspection.ipynb`
-
-Follow the notebook cells to inspect the dataset, reproduce the preprocessing and training workflow, and evaluate the models.
-
-## 12. Using the Saved Model for Prediction
-
-The trained model is saved in:
-
-`models/brain_tumor_mobilenetv2_tested.keras`
-
-It can be loaded directly without retraining.
-
-Example prediction code:
-
-```python
-import tensorflow as tf
-import numpy as np
-from PIL import Image
-
-MODEL_PATH = "models/brain_tumor_mobilenetv2_tested.keras"
-
-model = tf.keras.models.load_model(MODEL_PATH)
-
-CLASSES = [
-    "glioma",
-    "meningioma",
-    "no_tumor",
-    "pituitary"
-]
-
-def predict_brain_tumor(image_path):
-
-    image = Image.open(image_path).convert("RGB")
-    image = image.resize((224, 224))
-
-    image_array = np.array(image).astype("float32") / 255.0
-    image_array = np.expand_dims(image_array, axis=0)
-
-    predictions = model.predict(image_array, verbose=0)[0]
-
-    predicted_index = np.argmax(predictions)
-    predicted_class = CLASSES[predicted_index]
-    confidence = float(predictions[predicted_index]) * 100
-
-    print("Predicted class:", predicted_class)
-    print(f"Model score: {confidence:.2f}%")
-
-    return predicted_class, confidence
-```
-
-Example:
-
-```python
-predict_brain_tumor("sample_mri.jpg")
-```
-
-**No retraining is required for ordinary predictions.** The saved model can be loaded whenever needed, provided the required dependencies and compatible input preprocessing are available.
-
-The model expects MRI images compatible with the training data. Its four-class output does not establish that an arbitrary image is a valid brain MRI, and its confidence score should not be interpreted as a clinically calibrated probability.
-
-## 13. Technologies Used
-
-| Category | Technologies |
-|---|---|
-| Programming language | Python |
-| Deep learning | TensorFlow, Keras |
-| Model architecture | CNN, MobileNetV2 |
-| Transfer learning | ImageNet pretrained weights |
-| Explainable AI | Grad-CAM |
-| Image processing | Pillow, TensorFlow image utilities |
-| Data analysis | NumPy, Pandas |
-| Visualization | Matplotlib, Seaborn |
-| Evaluation | Scikit-learn |
-| Development | Jupyter Notebook, Anaconda |
-| Version control | Git, GitHub |
-
-## 14. Limitations
-
-This project is an academic research prototype and not a clinically validated diagnostic tool.
-
-Important limitations include:
-
-- Performance depends on the quality and distribution of the training dataset.
-- Images from different scanners, hospitals and MRI sequences may have different characteristics.
-- The model is limited to the four classes used during training.
-- It may produce misleading predictions for non-MRI images or images outside the training distribution.
-- Grad-CAM is an interpretability technique, not proof of medical reasoning or tumor localization.
-- Confidence scores are model outputs and are not necessarily calibrated probabilities.
-- Independent clinical validation is required before any real-world medical application.
-
-Predictions should not be used to make medical decisions or replace professional radiological assessment.
-
-## 15. Future Improvements
-
-Potential directions for further development:
-
-1. Build a web interface for uploading MRI images and displaying predictions.
-2. Integrate Grad-CAM visualizations into the prediction interface.
-3. Experiment with additional pretrained architectures such as EfficientNet.
-4. Investigate the misclassification of glioma and meningioma images.
-5. Evaluate generalization using external MRI datasets.
-6. Explore confidence calibration and out-of-distribution detection.
-7. Extend the project toward tumor localization and segmentation.
-8. Develop a more comprehensive model comparison and robustness evaluation.
-
-## 16. References
-
-1. Fateh et al. (2025). **BRISC 2025: Brain MRI dataset for classification and segmentation tasks.** Research paper: https://arxiv.org/abs/2506.14318
-2. BRISC 2025 Dataset: https://www.kaggle.com/datasets/briscdataset/brisc2025
-3. Sandler, M. et al. (2018). **MobileNetV2: Inverted Residuals and Linear Bottlenecks.** IEEE/CVF Conference on Computer Vision and Pattern Recognition.
-4. Selvaraju, R. R. et al. (2017). **Grad-CAM: Visual Explanations from Deep Networks via Gradient-Based Localization.** IEEE International Conference on Computer Vision.
 
 ---
 
-## 17. Author and Project Information
+## 📈 13. Key Contributions and Work Completed
 
-**Project:** AI-Based Brain Tumor Classification Using MRI with Explainable Deep Learning
+The following are the major technical contributions and completed project activities:
+
+1. Implemented a complete brain MRI classification pipeline for four classes.
+2. Performed dataset inspection and class verification.
+3. Implemented SHA256-based duplicate detection.
+4. Identified and removed training-test duplicate leakage.
+5. Created stratified training and validation splits.
+6. Developed a custom CNN baseline.
+7. Implemented MobileNetV2 transfer learning.
+8. Implemented EfficientNetB0 for architecture comparison.
+9. Performed fine-tuning of pretrained models.
+10. Corrected an augmentation input-range issue in the MobileNetV2 experiment.
+11. Compared both transfer-learning models on the same held-out test set.
+12. Evaluated performance using accuracy, precision, recall, F1-score and confusion matrices.
+13. Integrated Grad-CAM explainability.
+14. Developed an interactive Streamlit application.
+15. Demonstrated inference using external MRI images.
+
+---
+
+## ⚠️ 14. Limitations
+
+- The model is trained and evaluated on a specific public dataset.
+- External images may differ in scanner type, MRI sequence, contrast, resolution and acquisition conditions.
+- External-image predictions have not been independently validated against expert annotations.
+- Confidence scores are not calibrated probabilities of clinical correctness.
+- Grad-CAM provides approximate visual explanations, not exact tumor boundaries.
+- The system has not undergone clinical validation.
+- The model should not be used for diagnosis, treatment selection or clinical decision-making.
+
+---
+
+## 🔮 15. Future Enhancements
+
+Potential improvements include:
+
+- Evaluation on independent hospital datasets.
+- External validation using expert-verified labels.
+- MRI tumor segmentation.
+- Integration of more advanced explainability techniques.
+- Model calibration and uncertainty estimation.
+- Robustness testing across MRI modalities and scanners.
+- Improved deployment and user-interface design.
+- More extensive model comparison.
+
+---
+
+## 📚 16. References
+
+### Dataset
+
+BRISC 2025 Brain MRI Dataset:
+
+https://www.kaggle.com/datasets/briscdataset/brisc2025
+
+### Research paper
+
+Fateh et al. (2025). BRISC 2025.
+
+https://arxiv.org/abs/2506.14318
+
+### Model architectures
+
+- MobileNetV2: https://arxiv.org/abs/1801.04381
+- EfficientNet: https://arxiv.org/abs/1905.11946
+
+### Explainable AI
+
+Selvaraju et al. (2017). Grad-CAM: Visual Explanations from Deep Networks via Gradient-Based Localization.
+
+https://arxiv.org/abs/1610.02391
+
+### Framework documentation
+
+- TensorFlow: https://www.tensorflow.org/
+- Keras: https://keras.io/
+- Streamlit: https://docs.streamlit.io/
+
+---
+
+## 👨‍💻 17. Author
+
+**Individual Academic Capstone Project**
+
+**Project Title:** AI-Based Brain Tumor Classification Using MRI with Explainable Deep Learning
 
 **GitHub Repository:**  
 https://github.com/chaitanyaReddy4/Brain-Tumor-Classification-MRI
 
-**Primary Model:** Fine-tuned MobileNetV2
-
-**Final Test Accuracy:** 89.90%
-
-**Dataset:** BRISC 2025
-
-**Project Type:** Academic Deep Learning / Medical Image Classification
-
 ---
 
-*This project demonstrates the application of deep learning, transfer learning, model evaluation and explainable AI techniques to medical image classification. It is intended for educational and research purposes only.*
+<p align="center">
+
+**Built with Python, Deep Learning and Explainable AI.**
+
+</p>
