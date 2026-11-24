@@ -8,7 +8,7 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Environment
+# Environments
 .venv/
 venv/
 env/
@@ -16,3 +16,11 @@ env/
 # Temporary files
 *.tmp
 .DS_Store
+
+# Model training checkpoints
+*.weights.h5
+checkpoint/
+project_checkpoint/
+
+# Local environment files
+.env

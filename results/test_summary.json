@@ -1,0 +1,8 @@
+{
+    "model": "Fine-tuned MobileNetV2",
+    "test_accuracy": 0.8989999890327454,
+    "test_loss": 0.27755358815193176,
+    "test_images": 1000,
+    "macro_f1": 0.9053490886348328,
+    "weighted_f1": 0.8979874550952256
+}
